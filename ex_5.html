@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<style type="text/css">
+	body{margin: 0px; background: #000; color: #000;}
+	div#header{ position:fixed; background: #333; padding: 20px; font-size: 36px; width: 100%; border-bottom: #000 1px solid;}
+	div#thumbnailbox { float:left; margin-top: 80px; width: 120px;; background: #8F30A4;}
+	div#thumbnailbox > div { width:100px; height: 80px; overflow:hidden; margin:10px; cursor: pointer;}
+	div#thumbnailbox > div > img {width: 100px; }
+	div#sidebarframe { position:fixed; left: 140px; top: 100px; width: 700px; height: 500px;}
+	div#sidebarframe > img {width: 700px; height: 500px; }
+</style>
+<script>
+function ajax_json_php_gallery(folder){
+	document.getElementById("header").innerHTML = "Dynamic Photo Gallery using AJAX and JSON"; //putting title on top header div
+    var thumbnailbox = document.getElementById("thumbnailbox");
+	var sidebarframe = document.getElementById("sidebarframe"); /// displaying fist picture on thumbnail box when page is load first time
+    var hr = new XMLHttpRequest();
+    hr.open("POST", "ex_5_json_file.php");
+    hr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    hr.onreadystatechange = function() {
+	    if(hr.readyState == 4 && hr.status == 200) {
+		    var d = JSON.parse(hr.responseText);
+			sidebarframe.innerHTML = "<img src='"+d.img1.src+"'>"; //img 1 ,src put the picture by default 
+			thumbnailbox.innerHTML = "";
+			//results.innerHTML += data.u2.user+" is "+data.u2.age+" and lives in "+data.u2.country+"<hr />";
+			for(var o in d){
+				if(d[o].src){// if src property is found on data veriable d 
+					thumbnailbox.innerHTML += '<div onclick="putinframe(\''+d[o].src+'\')"><img src="'+d[o].src+'"></div>'; //a bunch of little div's and image tag image tag inside of each one of its thumbnail but wee need to add function put in frame that is fired off onclick event 
+				} //+= append to the data within the box if u said simply equal then all data will be overide the once that whould put in before
+			}
+	    }
+    }
+    hr.send("folder="+folder);//passing folder name in folder variable
+    results.innerHTML = "requesting...";
+}
+	function putinframe(src){ // this will put picture on the thunbnail box when we clicked on it
+		var sidebarframe = document.getElementById("sidebarframe");
+		sidebarframe.innerHTML = '<img src="'+src+'">';
+	}
+</script>
+<meta charset="utf-8">
+<title>JSON AJAX PHP Gallery</title>
+</head>
+<body>
+	<div id="header"></div>
+	<div id="thumbnailbox"></div>
+	<div id="sidebarframe"></div>
+	<script type = "text/javascript">ajax_json_php_gallery('gallery');</script>
+</body>
+</html>
